@@ -1,5 +1,6 @@
 import styles from './Portfolio.module.css'
 import SolutionCarousel from './SolutionCarousel'
+import BodyText from './BodyText'
 import { asset } from '../../lib/asset'
 
 const DETAIL_FIELDS = [
@@ -47,7 +48,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
             <h3 className={styles.detailIntroSubtitle}>{detail.subtitle}</h3>
           )}
           {detail.body && (
-            <p className={styles.detailIntroBody}>{detail.body}</p>
+            <BodyText text={detail.body} className={styles.detailIntroBody} />
           )}
           {detail.meta && (
             <dl className={styles.detailMeta}>
@@ -97,7 +98,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
               <div className={styles.infoText}>
                 <span className={styles.infoLabel}>{section.label}</span>
                 <h3 className={styles.infoTitle}>{section.title}</h3>
-                <p className={styles.infoBody}>{section.body}</p>
+                <BodyText text={section.body} className={styles.infoBody} />
               </div>
             )}
           </div>
@@ -118,7 +119,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
           <div className={styles.infoText}>
             <span className={styles.infoLabel}>{detail.retro.label}</span>
             <h3 className={styles.infoTitle}>{detail.retro.title}</h3>
-            <p className={styles.infoBody}>{detail.retro.body}</p>
+            <BodyText text={detail.retro.body} className={styles.infoBody} />
           </div>
         </div>
       )}

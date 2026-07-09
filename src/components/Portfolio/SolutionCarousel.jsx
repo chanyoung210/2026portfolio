@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import styles from './Portfolio.module.css'
+import BodyText from './BodyText'
 import { asset } from '../../lib/asset'
 
 function ChevronIcon({ direction }) {
@@ -115,7 +116,7 @@ export default function SolutionCarousel({ carousel }) {
         <div className={styles.infoText}>
           <span className={styles.infoLabel}>{carousel.label}</span>
           <h3 className={styles.infoTitle}>{carousel.title}</h3>
-          <p className={styles.infoBody}>{carousel.body}</p>
+          <BodyText text={carousel.body} className={styles.infoBody} />
         </div>
       )}
     </div>

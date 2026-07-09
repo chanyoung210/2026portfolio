@@ -715,6 +715,14 @@
 }
 
 @media (max-width: 1024px) {
+  /* PC-only manual line breaks in body copy (BodyText.jsx) — collapsed
+     back to natural wrapping below 1024px since the break points are
+     tuned for desktop line width and read awkwardly once the column
+     narrows. */
+  .pcBreak {
+    display: none;
+  }
+
   /* Desktop's 32px (space-5) top is intentionally small — paired with
      Motto's own 32px bottom to total exactly 64px, the "섹션-섹션 간격"
      token (see the comment on the base .portfolio rule). At tablet/mobile
