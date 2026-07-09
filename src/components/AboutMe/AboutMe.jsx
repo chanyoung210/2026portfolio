@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './AboutMe.module.css'
+import { asset } from '../../lib/asset'
 
 const DIVIDER_LABELS = ['© PORTFOLIO 2026', 'ABOUT ME', '05 / 05']
 
@@ -58,7 +59,7 @@ const MARQUEE_SPEED_PX_PER_SEC = 60
 
 function MarqueeImage({ item }) {
   if (item.image) {
-    return <img src={item.image} alt={item.alt} />
+    return <img src={asset(item.image)} alt={item.alt} />
   }
   return (
     <div className={styles.placeholderImage}>

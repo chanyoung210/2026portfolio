@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLenis } from '../../lib/LenisProvider'
 import styles from './Motto.module.css'
+import { asset } from '../../lib/asset'
 
 const DIVIDER_LABELS = [
   '© PORTFOLIO 2026',
@@ -313,7 +314,7 @@ export default function Motto() {
 
             <div className={styles.imageColumn}>
               <div ref={imageCardRef} className={styles.imageCard}>
-                <img src="/me.png" alt="안찬영" className={styles.image} />
+                <img src={asset('/me.png')} alt="안찬영" className={styles.image} />
               </div>
             </div>
           </div>

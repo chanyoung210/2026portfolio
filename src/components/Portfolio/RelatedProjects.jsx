@@ -1,4 +1,5 @@
 import styles from './Portfolio.module.css'
+import { asset } from '../../lib/asset'
 
 // Abbreviated labels for this strip only — the canonical project.title
 // (used everywhere else: cards, detail headers) stays full-length. Pokemon
@@ -34,7 +35,7 @@ export default function RelatedProjects({ projects, visible, onSelect }) {
                 <span className={styles.relatedThumb}>
                   {project.image ? (
                     <img
-                      src={project.image}
+                      src={asset(project.image)}
                       alt={project.title}
                       className={styles.relatedThumbImg}
                     />

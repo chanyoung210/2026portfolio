@@ -1,5 +1,6 @@
 import styles from './Portfolio.module.css'
 import SolutionCarousel from './SolutionCarousel'
+import { asset } from '../../lib/asset'
 
 const DETAIL_FIELDS = [
   { key: 'problem', label: 'Problem' },
@@ -29,7 +30,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
       <div className={styles.detailImage}>
         {visualSrc ? (
           <img
-            src={visualSrc}
+            src={asset(visualSrc)}
             alt={project.title}
             className={styles.thumbImage}
           />
@@ -84,7 +85,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
               {images.map(({ src, alt }) => (
                 <img
                   key={src}
-                  src={src}
+                  src={asset(src)}
                   alt={alt}
                   className={
                     section.flat ? styles.infoImgFlat : styles.infoImg
@@ -109,7 +110,7 @@ export default function ProjectDetail({ project, onClose, ctaRef }) {
         <div className={styles.infoSection}>
           <div className={styles.infoImage}>
             <img
-              src={detail.retro.image}
+              src={asset(detail.retro.image)}
               alt={detail.retro.title}
               className={styles.infoImg}
             />

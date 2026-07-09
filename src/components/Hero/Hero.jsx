@@ -1,4 +1,5 @@
 import styles from './Hero.module.css'
+import { asset } from '../../lib/asset'
 
 // Stagger interval between each character's entrance (seconds).
 const STAGGER_STEP = 0.06
@@ -113,7 +114,7 @@ export default function Hero({ companyName = 'Aladin', animate = true }) {
                 custom properties so the one CSS `animation-delay` can pick
                 the right one per breakpoint (see .logo.logoAnimate). */}
             <img
-              src="/logo.png"
+              src={asset('/logo.png')}
               alt=""
               className={`${styles.logo} ${animate ? styles.logoAnimate : ''}`}
               style={

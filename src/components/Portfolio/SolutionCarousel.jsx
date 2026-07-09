@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import styles from './Portfolio.module.css'
+import { asset } from '../../lib/asset'
 
 function ChevronIcon({ direction }) {
   const points = direction === 'left' ? '15 6 9 12 15 18' : '9 6 15 12 9 18'
@@ -23,7 +24,7 @@ function ClientCard({ card }) {
     <div className={styles.solutionCard}>
       <div className={styles.solutionCardImage}>
         <img
-          src={card.image}
+          src={asset(card.image)}
           alt={card.client}
           className={styles.solutionCardImg}
         />

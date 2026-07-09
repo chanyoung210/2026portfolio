@@ -1,8 +1,9 @@
 import styles from './Portfolio.module.css'
+import { asset } from '../../lib/asset'
 
 function ProjectImage({ image, label }) {
   if (image) {
-    return <img src={image} alt={label} className={styles.thumbImage} />
+    return <img src={asset(image)} alt={label} className={styles.thumbImage} />
   }
   return (
     <div className={styles.placeholderImage}>

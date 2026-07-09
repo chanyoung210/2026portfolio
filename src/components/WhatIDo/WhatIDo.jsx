@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './WhatIDo.module.css'
+import { asset } from '../../lib/asset'
 
 const DIVIDER_LABELS = [
   '© PORTFOLIO 2026',
@@ -51,7 +52,7 @@ function isDesktopViewport() {
 
 function ItemImage({ item }) {
   if (item.image) {
-    return <img src={item.image} alt={item.category} />
+    return <img src={asset(item.image)} alt={item.category} />
   }
   return (
     <div className={styles.placeholderImage}>
