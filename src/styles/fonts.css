@@ -1,0 +1,17 @@
+/* A2Z — headline font. Drop the licensed woff2 files into /public/fonts/
+   (filenames below) once available; layout falls back to Pretendard until then. */
+@font-face {
+  font-family: 'A2Z';
+  src: url('/fonts/A2Z-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'A2Z';
+  src: url('/fonts/A2Z-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,384 @@
+.whatIDo {
+  position: relative;
+  padding: var(--space-8) 0;
+}
+
+/* Divider — same grid-centered pattern as Portfolio's: 1fr/auto/1fr keeps
+   the middle label at the true horizontal center regardless of how long
+   the left/right labels are. */
+.divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-7);
+  border-bottom: 1px solid var(--color-text-muted);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease 0.5s,
+    transform 0.8s ease 0.5s;
+}
+
+.divider.dividerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dividerLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.dividerLabel:first-child {
+  justify-self: start;
+}
+
+.dividerLabel:nth-child(2) {
+  justify-self: center;
+}
+
+.dividerLabel:last-child {
+  justify-self: end;
+}
+
+/* Title — big, centered; (04) + dot float as a superscript badge pinned
+   to the text's own top-right corner (see .titleWrap/.titleMeta below). */
+
+.titleRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+  text-align: center;
+}
+
+/* Shrink-wraps to the title text's actual rendered box (not the full
+   centered row) so .titleMeta's absolute positioning below anchors to
+   the text's real top-right corner at any viewport width. */
+.titleWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.title {
+  font-family: var(--font-headline);
+  /* Fluid scale: floors around 48px on narrow phones, tops out at 140px on
+     wide desktop viewports — continuous, no extra breakpoint needed. */
+  font-size: clamp(48px, 10vw, 140px);
+  line-height: 1.05;
+  font-weight: var(--fw-h1);
+  color: var(--color-text-main);
+}
+
+/* Per-character reveal — same rhythm/easing as Hero's char-in, just
+   gated behind IntersectionObserver (see titleVisible in WhatIDo.jsx)
+   instead of firing on mount. Base state sits invisible/offset with no
+   animation until .charAnimate is added, so nothing plays before the
+   section scrolls into view. */
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+}
+
+/* Duration here must stay in sync with CHAR_DURATION in WhatIDo.jsx. */
+.char.charAnimate {
+  animation: char-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes char-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge pinned to the title text's top-right corner, straddling the
+   edge (translate(50%, -50%) — the standard notification-badge
+   technique). The entrance rise (translateY 0.4em -> 0) is layered on
+   top of that fixed offset within the same transform value, since a
+   single element can only have one live `transform`. */
+.titleMeta {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  opacity: 0;
+  transform: translate(50%, -50%) translateY(0.4em);
+}
+
+.titleMeta.titleMetaAnimate {
+  animation: title-meta-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes title-meta-in {
+  from {
+    opacity: 0;
+    transform: translate(50%, -50%) translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translate(50%, -50%) translateY(0);
+  }
+}
+
+.titleIndex {
+  font-family: var(--font-headline);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-h1);
+  color: var(--color-accent);
+}
+
+.titleDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* !important: .char.charAnimate / .titleMeta.titleMetaAnimate have
+     higher specificity than the plain selectors here, so without it these
+     would lose the cascade fight once titleVisible flips true and just
+     play the animation anyway. */
+  .char,
+  .titleMeta {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Table -------------------------------------------------------------- */
+
+.table {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+/* 4 explicit column tracks, 2:1.5:5:1.5 — category / point / description /
+   numbering. No grid-template-areas here on purpose —
+   .category/.point/.description/.number rely on plain auto-placement (DOM
+   order -> column 1/2/3/4), which is unambiguous. grid-area names are
+   only introduced inside the 768px media query below, together with the
+   grid-template-areas that defines them — keeping the two anywhere apart
+   is what caused the previous break (a dangling grid-area reference with
+   no matching area collapses every item into the same cell). */
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 5fr 1.5fr;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid #ececef;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.category {
+  position: static;
+  font-family: var(--font-headline);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: var(--fw-h3);
+  color: var(--color-text-main);
+  transition: color 0.3s ease;
+}
+
+.row:hover .category {
+  color: var(--color-accent);
+}
+
+.point {
+  position: static;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.description {
+  position: static;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-sub);
+}
+
+.number {
+  position: static;
+  text-align: right;
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+/* Cursor-following image box ------------------------------------------
+   Fixed to the viewport and repositioned via translate3d on every
+   mousemove (JS writes transform directly to the DOM node, no React
+   state — same technique as CustomCursor). Only opacity is transitioned
+   here for the show/hide fade; the position itself must stay
+   transition-free to track the cursor with zero lag. Desktop-only
+   (> 1024px) — hidden by media query below and never activated by JS
+   under that width. */
+.cursorBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 240px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: #fafafa;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+.cursorBox.cursorBoxVisible {
+  opacity: 1;
+}
+
+.slot {
+  position: absolute;
+  inset: 0;
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease;
+}
+
+.slot.slotInstant {
+  transition: none;
+}
+
+.slotBelow {
+  transform: translateY(100%);
+}
+
+.slotFront {
+  transform: translateY(0);
+}
+
+.slotAbove {
+  transform: translateY(-100%);
+}
+
+.placeholderImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #d6d6db;
+  border-radius: var(--radius);
+  background: #fafafa;
+}
+
+.placeholderLabel {
+  padding: 0 var(--space-3);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .row {
+    gap: var(--space-4);
+  }
+
+  /* Cursor-following reveal is desktop-only (> 1024px). */
+  .cursorBox {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Desktop's 96px (space-8) top/bottom felt too much at mobile widths —
+     reduced to 60px per explicit request. */
+  .whatIDo {
+    padding: 60px 0;
+  }
+
+  /* Only 2 of the 3 labels fit cleanly at mobile widths — drop the
+     copyright label, leaving section name (left) / number (right). Plain
+     flex space-between instead of the desktop grid — with just 2 items
+     there's no middle label to keep true-centered. */
+  .divider {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .dividerLabel:first-child {
+    display: none;
+  }
+
+  /* (04) + dot badge sits awkwardly at mobile widths (see .titleMeta) —
+     dropped entirely rather than repositioned. */
+  .titleMeta {
+    display: none;
+  }
+
+  /* 64px (space-7) down to 40px per explicit request — less space needed
+     between the title and the item list at mobile widths. */
+  .titleRow {
+    margin-bottom: 40px;
+  }
+
+  /* Category + point share a row (space-between via 1fr/auto — category's
+     1fr cell absorbs all the leftover width, so point's auto cell always
+     lands flush at the row's right edge), description drops to its own
+     line below. Number is dropped at mobile entirely (see .number) — with
+     it gone this is 2 columns, not 3. grid-area is only ever set here,
+     alongside the grid-template-areas that actually defines it. */
+  .row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'category point' 'description description';
+    column-gap: var(--space-3);
+    /* 4px (space-1) + 4px more per explicit request. */
+    row-gap: var(--space-2);
+    /* 16px (space-3) + 4px each side per explicit request — the extra 4px
+       top + 4px bottom between adjacent rows reads as 8px more breathing
+       room between items. */
+    padding: 20px 0;
+  }
+
+  .category {
+    grid-area: category;
+  }
+
+  .point {
+    grid-area: point;
+  }
+
+  .description {
+    grid-area: description;
+  }
+
+  .number {
+    display: none;
+  }
+}

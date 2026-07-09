@@ -1,0 +1,109 @@
+.cursorOuter {
+  display: none;
+}
+
+@media (pointer: fine) {
+  .cursorOuter {
+    display: block;
+    /* Zero-size anchor — translate3d in JS puts this exact point at the
+       real cursor position every mousemove. .cursorInner (below) is
+       absolutely positioned off *this* point and self-centers via
+       translate(-50%, -50%), computed off its own current box size — so
+       resizing .cursorInner (circle -> pill, "COPY" -> "COPIED!") always
+       stays centered on the cursor with no separate math to keep in sync. */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    opacity: 1;
+    pointer-events: none;
+    /* mix-blend-mode lives HERE, on the fixed top-level element, not on
+       .cursorInner below. position:fixed always opens its own stacking
+       context — a blend-mode on a *descendant* of that context only has
+       other elements inside the same fixed box to blend against (there
+       are none, just .cursorInner itself), so it silently does nothing
+       and the circle renders as flat, always-white. Blending on .cursorOuter
+       itself blends the whole composited fixed box (i.e. the visible
+       circle/pill) against the real page content behind it, which is what
+       actually inverts against light/dark backgrounds. */
+    mix-blend-mode: difference;
+    transition: opacity 0.15s ease;
+    /* No transition on transform on purpose — translate3d is set on every
+       mousemove and must track the real cursor with zero lag/easing. */
+  }
+}
+
+/* Hidden over elements with data-cursor="hide" (e.g. the hero logo), so the
+   native cursor (cursor: pointer set on that element) shows instead. */
+.cursorOuter.cursorOuterHidden {
+  opacity: 0;
+}
+
+/* Text mode (e.g. hovering the Footer email button) drops the difference
+   blend — a readable label needs a plain solid pill, not one whose color
+   inverts against whatever's behind it. */
+.cursorOuter.cursorOuterText {
+  mix-blend-mode: normal;
+}
+
+.cursorInner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition:
+    width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursorInner.cursorHover {
+  width: 32px;
+  height: 32px;
+}
+
+/* Pill: fixed height, auto width (grows with content, e.g. "COPY" ->
+   "COPIED!"), border-radius = height / 2 for true pill ends. */
+.cursorInner.cursorTextMode {
+  min-width: 80px;
+  width: auto;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.cursorLabel {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  /* Plays on every mount — the label's React `key` is the text itself
+     (see CustomCursor.jsx), so swapping "COPY" -> "COPIED!" -> "COPY"
+     remounts the span each time and replays this pop-in, which is what
+     gives the swap its own transition instead of an instant text change. */
+  animation: cursor-label-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cursor-label-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

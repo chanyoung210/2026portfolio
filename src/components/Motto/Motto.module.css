@@ -1,0 +1,247 @@
+/* Bottom is deliberately smaller than top: with both edges at
+   --space-8 (96px), Motto's padding-bottom stacked with Portfolio's own
+   padding-top produced a ~192px gap between them — well past the
+   64px "섹션-섹션 간격" spacing-guide token. Splitting 32px here +
+   32px on Portfolio's padding-top (see Portfolio.module.css) adds up to
+   exactly that 64px, without touching Motto's own top spacing (which is
+   about the transition from Hero, a separate concern) or Portfolio's
+   bottom (transition into What I Do). No min-height was involved —
+   there wasn't one set anywhere in this file. */
+.motto {
+  padding: var(--space-8) 0 var(--space-5);
+}
+
+/* Extra inset on top of the shared .container padding — scoped to Motto
+   only, doesn't touch the global --container-padding token. */
+.mottoInner {
+  padding: 0 60px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  /* +20px on top of the standard space-7 token, per explicit request. */
+  margin-bottom: calc(var(--space-7) + 20px);
+  border-bottom: 1px solid var(--color-text-muted);
+  /* Entrance: fades and rises up once, the first time it scrolls into view.
+     0.5s delay before it starts so the motion reads clearly instead of
+     firing the instant it's 20% in view. */
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease 0.5s,
+    transform 0.8s ease 0.5s;
+}
+
+.divider.dividerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dividerLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  /* Wider than the standard space-8 token on purpose — explicit request for
+     extra breathing room between the two columns, not outer edge padding. */
+  gap: calc(var(--space-8) + var(--space-4));
+  align-items: start;
+}
+
+.textColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.mottoText {
+  font-family: var(--font-body);
+  /* Scoped to Motto only — deliberately bigger than the H2 token, not tied
+     to the shared type scale. */
+  font-size: 40px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* Mobile renders an entirely different, purpose-written paragraph
+   (MOTTO_LINES_MOBILE in Motto.jsx — shorter wording, not just the desktop
+   text re-wrapped) rather than reflowing the desktop one, so both exist in
+   the DOM always and CSS just toggles which is shown (same pattern as
+   Hero's headlineLineDesktop/Mobile). Its .line children stay the default
+   display:block below — the earlier attempt at this instead kept the
+   original desktop text and made .line inline so it could wrap naturally,
+   but that broke .highlight's line-start assumption (see that rule's
+   comment) once a highlight could land mid-line. Writing exact mobile
+   line breaks on purpose sidesteps that: same as desktop, each highlighted
+   phrase is still guaranteed to start its own line. */
+.mottoTextMobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mottoText {
+    font-size: 28px;
+  }
+
+  .mottoTextDesktop {
+    display: none;
+  }
+
+  .mottoTextMobile {
+    display: block;
+  }
+}
+
+.line {
+  display: block;
+  word-break: keep-all;
+}
+
+.char {
+  /* Lighter than the standard --color-text-muted on purpose — scoped to
+     Motto's bigger 40px text, where the default gray read too close to the
+     revealed dark color. Shared token is untouched. */
+  color: #d6d6db;
+  transition: color 0.3s ease;
+}
+
+.char.charRevealed {
+  color: var(--color-text-main);
+}
+
+/* Marker-highlight: a fake "gradient image" sized 0%->100% width, since
+   background-size has no effect on background-color. Only starts once the
+   color reveal above has fully finished (see highlightActive in JS).
+   Horizontal padding only — vertical padding on an inline element throws
+   off the surrounding line's vertical rhythm. The matching negative margin
+   cancels the padding's effect on text flow, so a highlight sitting at the
+   very start of a line (like both phrases here do) doesn't push that
+   line's visible starting point out of alignment with the others. */
+.highlight {
+  padding: 0 0.25em;
+  margin: 0 -0.25em;
+  border-radius: 4px;
+  background-image: linear-gradient(
+    rgba(38, 68, 190, 0.18),
+    rgba(38, 68, 190, 0.18)
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  transition: background-size 0.7s ease;
+}
+
+.highlight.highlightActive {
+  background-size: 100% 100%;
+}
+
+.caption {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-small);
+  color: var(--color-text-muted);
+}
+
+.captionLine {
+  display: block;
+  word-break: keep-all;
+}
+
+.imageColumn {
+  display: flex;
+}
+
+.imageCard {
+  width: 100%;
+  /* Matches me.png's actual pixel dimensions (560x748) so the photo fills
+     the card exactly at its own proportions — no crop, no shrink-to-fit. */
+  aspect-ratio: 560 / 748;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .motto {
+    /* Desktop's 32px bottom (paired with Portfolio's 32px top = 64px total)
+       was tuned for the desktop column layout — at tablet the text column
+       wraps to more lines and the section reads denser overall, so 32px
+       alone felt tight. Bumped to match the breathing room other section
+       transitions get. */
+    padding-bottom: var(--space-7);
+  }
+
+  .mottoInner {
+    padding: 0 36px;
+  }
+
+  /* Grid intentionally stays side-by-side (not stacked to 1 column) down
+     through tablet — the split is what keeps the image column narrow;
+     stacking it here made the 560:748 portrait fill the full text-column
+     width instead, reading as a huge, imposing face. 8:2 (narrower than
+     desktop's 7:3) read as too small on a second look, so eased back out
+     to 7.5:2.5. Narrower gap than the desktop one so the still-wide text
+     column doesn't get too cramped. */
+  .grid {
+    grid-template-columns: 7.5fr 2.5fr;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .mottoInner {
+    padding: 0 24px;
+  }
+
+  /* Only 2 of the 3 labels fit cleanly at mobile widths — drop the
+     copyright label, leaving section name (left) / number (right) on
+     .divider's existing space-between. */
+  .dividerLabel:first-child {
+    display: none;
+  }
+
+  /* Desktop's 84px (space-7 + 20px, see the base .divider rule) read as
+     too much empty space under the line at mobile widths, per explicit
+     request. */
+  .divider {
+    margin-bottom: 40px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    /* 48px (space-6) minus 10px per explicit request — this is the gap
+       between the text column and the image column now that they're
+       stacked (so effectively the image-to-text vertical gap). */
+    gap: 38px;
+  }
+
+  /* Only stacks at this breakpoint (see .grid above) — same reasoning as
+     the tablet comment: without a cap the image would stretch to the full
+     text-column width once it's no longer sharing a row. Centered so it
+     doesn't hug the left edge now that it's alone on its own row. Capped
+     smaller again (240px -> 200px) per explicit request — still felt a
+     little big. */
+  .imageColumn {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}

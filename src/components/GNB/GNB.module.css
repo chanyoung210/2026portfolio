@@ -1,0 +1,61 @@
+.gnb {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: var(--gnb-height);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  content-visibility: auto;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    transform 0.3s ease,
+    opacity 0.5s ease;
+}
+
+.hidden {
+  transform: translateY(-100%);
+}
+
+/* Pre-animate state — applied whenever animate=false is passed in, so GNB
+   can fade/slide in on demand instead of always being fully visible. */
+.entering {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  list-style: none;
+}
+
+.navLink {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-sub);
+  transition: color 0.2s ease;
+}
+
+.navLink:hover {
+  color: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .navList {
+    gap: var(--space-4);
+  }
+}

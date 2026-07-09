@@ -1,0 +1,253 @@
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: var(--gnb-height);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  /* Lets the headline size itself off this element's *actual* content
+     width (cqw) instead of the raw viewport (vw) — vw keeps growing past
+     1440px while this container is capped, which used to make the text
+     outgrow its box and wrap mid-word. */
+  container-type: inline-size;
+}
+
+@media (max-width: 768px) {
+  /* Containing block for .logo below once it switches to
+     position:absolute on mobile — anchoring it here (rather than .hero)
+     means `top: 100%` is exactly "right after .subline" (the last normal-
+     flow child), so the gap below the caption stays correct regardless of
+     how tall the 3-line headline ends up being on a given screen, instead
+     of guessing a fixed pixel offset from the whole section.
+
+     transform here re-centers the *whole* composition, logo included:
+     .hero's align-items:center only ever sees .inner's own flow height
+     (headline+subline), since the absolutely-positioned .logo below
+     doesn't contribute to it — so without this, that centering leaves
+     the top looking empty once the logo's extra visual weight (gap +
+     height) sits below, uncounted. Shifting .inner up by roughly half
+     the logo's footprint rebalances it. */
+  .inner {
+    position: relative;
+    transform: translateY(-48px);
+  }
+}
+
+.headline {
+  font-family: var(--font-headline);
+  font-size: var(--fs-hero-impact);
+  line-height: var(--lh-hero-impact);
+  font-weight: var(--fw-hero);
+  color: var(--color-text-main);
+  /* Never wrap mid-word — the cqw-based size above is tuned to fit, this is
+     just the safety net if it's ever off. */
+  white-space: nowrap;
+}
+
+.headlineLine {
+  display: block;
+}
+
+/* Desktop/tablet renders line2 as one line ("Designer Portfolio."); mobile
+   splits it into two (see the mobile* variables in Hero.jsx) — both sets of
+   spans exist in the DOM always, this just toggles which is shown. Elements
+   with display:none don't run their CSS animations, so the hidden variant's
+   char-in keyframes never actually fire. */
+.headlineLineMobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .headline {
+    text-align: center;
+  }
+
+  .headlineLineDesktop {
+    display: none;
+  }
+
+  .headlineLineMobile {
+    display: block;
+  }
+}
+
+/* Base state sits invisible/offset with no animation until the matching
+   *Animate modifier is added (see the `animate` prop in Hero.jsx, gated on
+   the intro overlay closing) — otherwise these being timed in seconds
+   rather than tied to visibility meant the whole cascade would run to
+   completion underneath the opaque intro overlay, finishing before the
+   overlay even closed. */
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+}
+
+.char.charAnimate {
+  animation: char-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes char-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subline {
+  font-family: var(--font-body);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: var(--fw-body);
+  color: var(--color-text-sub);
+  opacity: 0;
+  transform: translateY(0.6em);
+}
+
+/* Hidden by default — only forces a break after "완성" on mobile (see
+   .subline below), where the now much-bigger headline calls for a
+   shorter, deliberately-placed subline instead of however it happens to
+   wrap. */
+.sublineMobileBreak {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .subline {
+    text-align: center;
+  }
+
+  .sublineMobileBreak {
+    display: inline;
+  }
+}
+
+.subline.sublineAnimate {
+  animation: subline-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes subline-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accent {
+  color: var(--color-accent);
+}
+
+.logo {
+  display: inline-block;
+  position: relative;
+  top: -0.06em;
+  left: -0.05em;
+  height: 0.66em;
+  width: auto;
+  margin-left: 0.3em;
+  vertical-align: middle;
+  opacity: 0;
+  transform: translateY(0.5em);
+  /* Easter egg: rub the lamp — beats the site-wide custom-cursor override
+     (which is also !important) because a class selector is more specific
+     than the universal one it's fighting. */
+  cursor: pointer !important;
+}
+
+.logo.logoAnimate {
+  animation: logo-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--logo-delay);
+}
+
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Same single element as desktop (see the JSX comment in Hero.jsx) —
+     this doesn't change display, only where/how it's positioned. Pulled
+     out of the inline text flow entirely: sits below .subline instead of
+     trailing "Aladin", bigger, untilted, and slides up on its own timing.
+     top:100% + margin-top against .inner (see .inner's own mobile query)
+     guarantees the gap is measured from the caption's actual bottom edge,
+     not a guessed pixel offset from the section — so it can't overlap the
+     caption regardless of how tall the headline/caption end up being on a
+     given screen. */
+  .logo {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-top: var(--space-5);
+    margin-left: 0;
+    height: 1.5em;
+    width: auto;
+    /* Sits in its own space below the caption (no overlap by construction,
+       so this doesn't strictly need to win a stacking fight) — set
+       explicitly anyway per requirements rather than relying on the
+       default positioned-above-static stacking behavior. */
+    z-index: 2;
+    transform: translateX(-50%) translateY(100px);
+  }
+
+  .logo.logoAnimate {
+    animation: logo-in-mobile 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--logo-delay-mobile);
+  }
+}
+
+@keyframes logo-in-mobile {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* !important: .char.charAnimate (etc.) has higher specificity than the
+     plain .char here, so without it these would lose the cascade fight
+     whenever animate=true and just play the animation anyway. */
+  .char,
+  .subline {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .logo {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  /* Mobile's resting transform is different from desktop's (no rotation,
+     translateX centering instead) — overrides just that one property from
+     the block above; animation/opacity stay inherited from it. */
+  .logo {
+    transform: translateX(-50%) !important;
+  }
+}

@@ -1,0 +1,44 @@
+/* Circular icon FAB — an intentional exception to the site's 6px card/
+   button radius (that spec is for the text CTA buttons in the guide;
+   this is a small utility control, same category as the circular custom
+   cursor / dot markers elsewhere). */
+.scrollTop {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-text-main);
+  color: var(--color-bg);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.2s ease;
+}
+
+.scrollTop:hover {
+  background: var(--color-accent);
+}
+
+.scrollTopVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .scrollTop {
+    right: var(--space-4);
+    bottom: var(--space-4);
+    width: 44px;
+    height: 44px;
+  }
+}

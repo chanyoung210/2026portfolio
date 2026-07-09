@@ -1,0 +1,176 @@
+.aboutMe {
+  padding: var(--space-8) 0;
+  /* Belt-and-suspenders alongside .marqueeViewport's own overflow:hidden —
+     the marquee track is intentionally wider than the viewport, this keeps
+     anything spilling past it clipped to the section regardless of which
+     wrapper ends up establishing the containing block. */
+  overflow: hidden;
+}
+
+/* Divider — same grid-centered pattern as Portfolio's / What I Do's. */
+.divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-7);
+  border-bottom: 1px solid var(--color-text-muted);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease 0.5s,
+    transform 0.8s ease 0.5s;
+}
+
+.divider.dividerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dividerLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.dividerLabel:first-child {
+  justify-self: start;
+}
+
+.dividerLabel:nth-child(2) {
+  justify-self: center;
+}
+
+.dividerLabel:last-child {
+  justify-self: end;
+}
+
+@media (max-width: 768px) {
+  /* Desktop's 96px (space-8) top/bottom felt too much at mobile widths —
+     reduced to 60px per explicit request. */
+  .aboutMe {
+    padding: 60px 0;
+  }
+
+  /* Only 2 of the 3 labels fit cleanly at mobile widths — drop the
+     copyright label, leaving section name (left) / number (right). Plain
+     flex space-between instead of the desktop grid — with just 2 items
+     there's no middle label to keep true-centered. This section had no
+     mobile override for .divider at all before (desktop's 3-column grid
+     was just left to run at every width, which is what was breaking the
+     alignment). */
+  .divider {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .dividerLabel:first-child {
+    display: none;
+  }
+}
+
+/* Marquee ------------------------------------------------------------
+   Full-bleed (outside .container) on purpose — a banner reads better
+   running edge to edge than boxed in.
+
+   Seamless loop: .marqueeTrack holds two .marqueeSet blocks (the second
+   is an exact duplicate, aria-hidden). Because the items vary in height
+   (rhythm), a fixed -50% keyframe isn't reliable — sub-pixel rounding on
+   the aspect-ratio-derived widths can make the two rendered halves differ
+   by a fraction of a pixel, which shows up as a seam. Instead, JS (see
+   AboutMe.jsx) measures the first set's actual rendered width via
+   getBoundingClientRect and drives `transform` directly on every
+   requestAnimationFrame, resetting the offset via modulo at exactly that
+   measured width + one gap — always pixel-exact, and re-measured via
+   ResizeObserver so a browser resize can't break the seam either.
+   .marqueeTrack's own `gap` (between the two set blocks) uses the same
+   --space-4 token as .marqueeSet's inter-image gap, so the seam gap
+   matches every other gap exactly. */
+.marqueeViewport {
+  width: 100%;
+  overflow: hidden;
+  margin: var(--space-6) 0;
+}
+
+.marqueeTrack {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: var(--space-4);
+  will-change: transform;
+}
+
+.marqueeSet {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--space-4);
+}
+
+.marqueeItem {
+  flex-shrink: 0;
+  /* Height is set inline per item (see AboutMe.jsx) — this is what gives
+     the row its size rhythm instead of a uniform strip. Width follows
+     automatically from the aspect-ratio below. */
+  aspect-ratio: 3 / 4;
+}
+
+.marqueeItem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.placeholderImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #d6d6db;
+  border-radius: var(--radius);
+  background: #fafafa;
+}
+
+.placeholderLabel {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-muted);
+}
+
+/* Caption -------------------------------------------------------------- */
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  text-align: center;
+}
+
+.captionEn {
+  font-family: var(--font-body);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.captionLine {
+  display: block;
+}
+
+.captionKo {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: #8c8c94;
+}

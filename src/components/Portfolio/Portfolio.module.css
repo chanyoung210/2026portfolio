@@ -1,0 +1,800 @@
+/* Top is deliberately smaller than bottom — see the matching note on
+   Motto's padding-bottom in Motto.module.css. This 32px + Motto's own
+   32px bottom padding = 64px total, matching the "섹션-섹션 간격"
+   spacing-guide token. Bottom stays at --space-8 (the transition into
+   What I Do is a separate, untouched concern). */
+.portfolio {
+  padding: var(--space-5) 0 var(--space-8);
+}
+
+/* Divider — same one-time reveal pattern as Motto's. Grid (not flex
+   space-between) so the middle label sits at the true horizontal center —
+   with space-between, unequal left/right label widths push the center
+   item off-center since it only centers within the leftover space. */
+.divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-text-muted);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease 0.5s,
+    transform 0.8s ease 0.5s;
+}
+
+.divider.dividerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dividerLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.dividerLabel:first-child {
+  justify-self: start;
+}
+
+.dividerLabel:nth-child(2) {
+  justify-self: center;
+}
+
+.dividerLabel:last-child {
+  justify-self: end;
+}
+
+/* Extra inset on top of the shared .container padding, below the divider
+   line — same pattern as Motto's .mottoInner, scoped to Portfolio only. */
+.portfolioInner {
+  padding: 0 40px;
+}
+
+/* Stage: holds the grid view and the detail view stacked in the same spot.
+   Whichever panel is "active" sits in normal flow (position: relative) and
+   sizes the stage; the other is pulled out of flow (position: absolute) so
+   it isn't part of layout while hidden. */
+.stage {
+  position: relative;
+}
+
+.panel {
+  width: 100%;
+  transition:
+    opacity 0.5s ease,
+    visibility 0s;
+}
+
+.panel.panelActive {
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.panel.panelHidden {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition-delay: 0s, 0.5s;
+}
+
+/* Grid ------------------------------------------------------------------ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6) var(--space-5);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  background: none;
+  text-align: left;
+  border-radius: var(--radius);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card:hover .placeholderImage {
+  border-color: var(--color-accent);
+}
+
+.thumb {
+  width: 100%;
+}
+
+.subThumb {
+  width: 100%;
+}
+
+.placeholderImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 640 / 520;
+  border: 1px dashed #d6d6db;
+  border-radius: var(--radius);
+  background: #fafafa;
+  transition: border-color 0.3s ease;
+}
+
+.thumbImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 640 / 520;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.placeholderLabel {
+  padding: 0 var(--space-3);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.category {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.title {
+  font-family: var(--font-headline);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: var(--fw-h2);
+  color: var(--color-text-main);
+  overflow-wrap: break-word;
+}
+
+/* Detail ------------------------------------------------------------------ */
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.detailClose {
+  align-self: flex-start;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-sub);
+  transition: color 0.2s ease;
+}
+
+.detailClose:hover {
+  color: var(--color-accent);
+}
+
+.detailHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.detailTitle {
+  font-family: var(--font-headline);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: var(--fw-h1);
+  color: var(--color-text-main);
+}
+
+.detailImage {
+  width: 100%;
+}
+
+.detailImage .placeholderImage,
+.detailImage .thumbImage {
+  aspect-ratio: 16 / 9;
+}
+
+/* Intro (visual hero → subtitle → body → meta) — currently only populated
+   for AIWEB; other main projects fall through to .detailFields unchanged
+   since detail.subtitle/body/meta are undefined for them. */
+.detailIntro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.detailIntroSubtitle {
+  font-family: var(--font-headline);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: var(--fw-h1);
+  color: var(--color-text-main);
+}
+
+.detailIntroBody {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-body);
+  color: var(--color-text-sub);
+}
+
+.detailMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  margin-top: var(--space-4);
+  margin-bottom: 120px;
+}
+
+.detailMetaRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.detailMetaLabel {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.detailMetaValue {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-main);
+}
+
+/* Reusable image -> label -> title -> body block, used for every AIWEB
+   detail section that follows this pattern (Problem, UX Research, ...).
+   margin-top(16px) stacks on top of .detail's own flex gap(48px) to reach
+   the 64px section-to-section spacing called for in the guide. */
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-3);
+}
+
+.infoImage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 68px;
+}
+
+/* Image-only sections (no label/title/body) skip the image->text gap —
+   next spacing comes from .infoSection's margin-top(16px) + .detail's own
+   gap(48px), landing on the guide's base 64px section-to-section rhythm. */
+.infoImageOnly {
+  margin-bottom: 0;
+}
+
+.infoImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+/* Same as .infoImg but no radius/shadow — for images that are already a
+   finished, self-contained diagram (e.g. 문제 해결's solution.png), not a
+   photo that needs the site's standard card/image treatment. */
+.infoImgFlat {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* width:100% (not the default `auto`) is required here — as a flex item
+   with cross-axis auto margins (margin:0 auto), `width:auto` shrinks to
+   hug its content instead of stretching, with the auto margins just
+   centering that hugged (smaller) box. width:100% forces it to actually
+   fill up to the max-width instead of merely capping at it, so short
+   content (e.g. 성과 지표's) still gets a full 800px box like long
+   content (e.g. 문제 정의's) does. */
+.infoText {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.infoLabel {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+}
+
+.infoTitle {
+  font-family: var(--font-headline);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: var(--fw-h3);
+  color: var(--color-text-main);
+  margin-bottom: var(--space-4);
+}
+
+.infoBody {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-body);
+  color: var(--color-text-sub);
+  margin-bottom: 120px;
+}
+
+/* Carousel — 문제 해결's own image/label/title/body now render generically
+   via .infoSection (part of `sections`, same as Problem/UX Research/성과
+   지표). This wrapper is just the carousel itself; margin-top matches
+   .infoSection's for the same 64px section-to-section rhythm. */
+.carouselSection {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-3);
+}
+
+.carouselWrap {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto 68px;
+}
+
+.carouselBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.carouselTitle {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-headline);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: var(--fw-h1);
+  color: var(--color-text-main);
+}
+
+.carouselDot {
+  color: var(--color-accent);
+}
+
+.carouselNav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.carouselArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-main);
+  transition: color 0.2s ease;
+}
+
+.carouselArrow:hover {
+  color: var(--color-accent);
+}
+
+.carousel {
+  width: 100%;
+}
+
+/* Standard Swiper equal-height-slides recipe: force the wrapper to stretch
+   its flex items and let each slide size to `auto` (not the default 100%,
+   which needs a definite height on an ancestor to mean anything and was
+   collapsing the CTA slide down to its own small content instead of
+   matching the taller client cards). .solutionCard/.ctaSlide below both
+   set height:100% so they actually fill whatever height the stretch gives
+   their slide. */
+.carousel :global(.swiper-wrapper) {
+  align-items: stretch;
+}
+
+.carousel :global(.swiper-slide) {
+  height: auto;
+}
+
+.solutionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+}
+
+.solutionCardImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.solutionCardImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.solutionCardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.solutionCardClient {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.solutionCardDesc {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--color-text-sub);
+}
+
+/* CTA slide: two identically-positioned "Works" spans inside a masked
+   box. height:100% (no min-height) so it stretches to match the client
+   cards next to it via Swiper's row-stretch behavior, same as them. Only
+   transform/opacity are animated (no layout properties) so the
+   cross-slide stays on the compositor. */
+.ctaSlide {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius);
+}
+
+.ctaSlideStack {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+}
+
+.ctaSlideWorks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-headline);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.ctaSlideWorksDefault {
+  color: var(--color-text-main);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ctaSlideWorksHover {
+  color: var(--color-accent);
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.ctaSlide:hover .ctaSlideWorksDefault {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.ctaSlide:hover .ctaSlideWorksHover {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ctaSlideMore {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-sub);
+}
+
+/* Final CTA — two buttons, closing out the AIWEB detail page. margin-top
+   matches .infoSection's for the same 64px section-to-section rhythm
+   (stacking on .infoBody's own 120px trailing margin above it). */
+.finalCta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--space-3);
+}
+
+.finalCtaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.btnPrimary,
+.btnSecondary {
+  width: 220px;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  text-align: center;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btnPrimary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.btnPrimary:hover {
+  background: var(--color-accent-hover);
+}
+
+.btnSecondary {
+  background: transparent;
+  border: 1.5px solid var(--color-text-muted);
+  color: var(--color-text-main);
+}
+
+.btnSecondary:hover {
+  background: var(--color-text-main);
+  color: var(--color-bg);
+}
+
+.detailFields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+.detailFieldLabel {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-headline);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-h3);
+  color: var(--color-text-main);
+}
+
+.detailFieldText {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-sub);
+}
+
+/* Related-projects strip — bottom-fixed, slides up/down the same way GNB
+   slides up/down at the top. Trigger (nearEnd / isDetailOpen) lives in
+   Portfolio.jsx; this is pure presentation. Shown on tablet too now (only
+   hidden below the Mobile(768px) cut — see that query) — a fixed bottom
+   bar with 3+ evenly-split items got too cramped on phone widths, but
+   tablet has the room for it. */
+.relatedStrip {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 80;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--color-text-muted);
+  opacity: 0;
+  transform: translateY(100%);
+  pointer-events: none;
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.relatedStripVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.relatedStripInner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--container-padding);
+}
+
+/* flex:1 on each list item (not a fixed card width) evenly splits whatever
+   width is available across however many other projects there are, so it
+   never overflows into a scrollbar regardless of the current project count.
+   The list itself is shrunk to 78% (thumbnail is width:100% of its item,
+   not the item) so the 12px gap reads as real space between cards instead
+   of empty padding inside an oversized item. */
+.relatedList {
+  display: flex;
+  width: 78%;
+  margin: 0 auto;
+  gap: 12px;
+  list-style: none;
+}
+
+.relatedListItem {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.relatedItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: center;
+}
+
+.relatedThumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 640 / 520;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.relatedThumbImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.relatedThumbPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #fafafa;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.relatedItem:hover .relatedThumbImg {
+  transform: scale(1.05);
+}
+
+.relatedTitle {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-small);
+  color: var(--color-text-main);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.relatedItem:hover .relatedTitle {
+  color: var(--color-accent);
+}
+
+@media (max-width: 1024px) {
+  /* Desktop's 32px (space-5) top is intentionally small — paired with
+     Motto's own 32px bottom to total exactly 64px, the "섹션-섹션 간격"
+     token (see the comment on the base .portfolio rule). At tablet/mobile
+     that 32px alone reads noticeably tighter than every other section's
+     top padding (WhatIDo/AboutMe/Motto all use the full 96px space-8,
+     unchanged across breakpoints), so bumped to match here per explicit
+     request. This block's max-width:1024px already covers mobile too
+     (768px is a subset), so one rule handles both. */
+  .portfolio {
+    padding-top: var(--space-8);
+  }
+
+  .portfolioInner {
+    padding: 0 24px;
+  }
+
+  .grid {
+    gap: var(--space-5) var(--space-4);
+  }
+
+  .detailFields {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  /* Related-strip thumbnails/title read a little small now that the strip
+     is shown on tablet too (see .relatedStrip above) — widened the list
+     (each flex:1 item grows with it, ~8px per thumbnail at typical related
+     counts) and bumped the title up one type-scale step (Small -> Body). */
+  .relatedList {
+    width: 84%;
+  }
+
+  .relatedTitle {
+    font-size: var(--fs-body);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Top is 96px (space-8, set in the 1024px query above) and bottom is
+     96px (space-8, the base rule's own value, never overridden) — same
+     "96px 0" felt too much at mobile as WhatIDo/AboutMe's, reduced to
+     60px 0 the same way. */
+  .portfolio {
+    padding: 60px 0;
+  }
+
+  .relatedStrip {
+    display: none;
+  }
+
+  .portfolioInner {
+    padding: 0 16px;
+  }
+
+  /* Only 2 of the 3 labels fit cleanly at mobile widths — drop the
+     copyright label, leaving section name (left) / number (right). Plain
+     flex space-between instead of the desktop grid: with just 2 items
+     there's no middle label to keep true-centered, so the grid's whole
+     reason for existing (see the comment on the base .divider rule) no
+     longer applies. */
+  .divider {
+    display: flex;
+    justify-content: space-between;
+    /* Desktop's 96px (space-8, see the base .divider rule) read as too
+       much empty space under the line at mobile widths, per explicit
+       request. */
+    margin-bottom: 40px;
+  }
+
+  .dividerLabel:first-child {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailMeta {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}

@@ -1,0 +1,96 @@
+.footer {
+  overflow: hidden;
+  /* Asymmetric on purpose — the top group (tagline + contact) already adds
+     height above the title that the single copyright line below doesn't
+     match, so equal top/bottom padding alone left the title sitting below
+     center. Less padding-top than padding-bottom nudges the whole block
+     up toward vertical center instead. */
+  padding: var(--space-7) 0 var(--space-6);
+  background: #131b42;
+  color: #ffffff;
+  text-align: center;
+}
+
+.tagline {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: #ffffff;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  /* Without this, flex's default align-items:stretch makes the email
+     button (a flex item) fill the full row width — well past its actual
+     text — so hover/click (and the COPY cursor) triggered on empty space
+     either side of it. Centering makes every item size to its own
+     content instead. */
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.contact p {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: #ffffff;
+}
+
+.emailButton {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: #ffffff;
+  transition: opacity 0.2s ease;
+}
+
+.emailButton:hover {
+  opacity: 0.7;
+}
+
+/* Initial "not arrived yet" state — JS (see Footer.jsx) overrides both
+   transform and opacity on mount and on every scroll tick, this is just
+   the pre-hydration fallback so nothing flashes at full size/opacity.
+   opacity/translateY values here must stay in sync with
+   TITLE_START_OPACITY/TITLE_START_OFFSET_PX.
+   Top margin is 75% of --space-8 (a ~25% cut) to close the gap from the
+   tagline/contact group above; bottom margin is 90% of --space-7
+   (a ~10% cut) to tighten the gap down to the copyright line. */
+.title {
+  margin: calc(var(--space-8) * 0.75) 0 calc(var(--space-7) * 0.9);
+  font-family: var(--font-headline);
+  font-size: clamp(40px, 9vw, 90px);
+  line-height: 1.05;
+  font-weight: 700;
+  opacity: 0.05;
+  transform: translateY(130px);
+  will-change: transform, opacity;
+}
+
+.titleLine {
+  display: block;
+}
+
+.copyright {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  font-weight: var(--fw-small);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* !important because JS writes inline transform/opacity on every scroll
+     tick — a plain override here would just get clobbered on the next
+     tick. This is the one case in the codebase where the reveal is
+     JS-driven rather than a CSS animation, so beating the inline style is
+     the only way to actually disable it. Lands directly at the *final*
+     arrived state (TITLE_END_OFFSET_PX), not translateY(0) — reduced
+     motion should skip the animation, not change the intended resting
+     position. */
+  .title {
+    opacity: 1 !important;
+    transform: translateY(-30px) !important;
+  }
+}
